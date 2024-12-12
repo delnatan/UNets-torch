@@ -1,0 +1,32 @@
+# project folder structure
+# └── pyproject.toml
+
+# minimal build specification
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "UNets-torch"
+version = "0.1.0"
+# end of minimal build specification
+
+description = "Collection of UNet parts"
+readme = "README.md"
+authors = [{name = "Daniel Elnatan", email = "delnatan@gmail.com"}]
+license = {file = "LICENSE"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy",
+    "torch",
+    "tifffile"
+]
+requires-python = ">=3.8"
+
+[project.urls]
+Homepage = "https://github.com/delnatan/UNets-torch"
+
