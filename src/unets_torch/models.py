@@ -26,8 +26,11 @@ class UNet(nn.Module):
         self.sigmoid = nn.Sigmoid()
 
         # Down part of UNet
-        for feature in features:
-            self.downs.append(DownsampleBlock(in_channels, feature))
+        for i, feature in enumerate(features):
+            is_first = i == 0
+            self.downs.append(
+                DownsampleBlock(in_channels, feature, is_input_block=is_first)
+            )
             in_channels = feature
 
         # Up part of UNet
@@ -74,16 +77,22 @@ class AttentionUNet(nn.Module):
         out_channels,
         features=[64, 128, 256, 512],
         concatenate_features=False,
+        use_logits=False,
     ):
         super().__init__()
         self.concatenate_features = concatenate_features
         self.downs = nn.ModuleList()
         self.ups = nn.ModuleList()
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.use_logits = use_logits
+        self.sigmoid = nn.Sigmoid()
 
         # Down part of UNet
-        for feature in features:
-            self.downs.append(DownsampleBlock(in_channels, feature))
+        for i, feature in enumerate(features):
+            is_first = i == 0
+            self.downs.append(
+                DownsampleBlock(in_channels, feature, is_input_block=is_first)
+            )
             in_channels = feature
 
         # Up part of UNet
@@ -115,4 +124,9 @@ class AttentionUNet(nn.Module):
             skip = skip_connections[i]
             x = up(x, skip)
 
-        return self.final_conv(x)
+        x = self.final_conv(x)
+
+        if self.use_logits:
+            return x
+        else:
+            return self.sigmoid(x)
